@@ -1,0 +1,7 @@
+build/
+*.o
+students10000.txt
+students100000.txt
+students1000000.txt
+output*.txt
+.DS_Store
