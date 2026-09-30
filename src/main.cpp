@@ -1,5 +1,7 @@
+#include <algorithm>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <string>
@@ -59,6 +61,22 @@ Person randomPerson(int number, int hwCount) {
     return p;
 }
 
+bool readFile(std::string fileName, std::vector<Person>& students) {
+    std::ifstream file(fileName);
+    if (!file) return false;
+    std::string header;
+    std::getline(file, header);
+    Person p;
+    while (file >> p) students.push_back(p);
+    file.close();
+    return true;
+}
+
+bool compareStudents(const Person& a, const Person& b) {
+    if (a.surname() != b.surname()) return a.surname() < b.surname();
+    return a.name() < b.name();
+}
+
 void printSingle(const std::vector<Person>& students, bool median) {
     std::cout << "\n" << std::left << std::setw(18) << "Name" << std::setw(20) << "Surname";
     if (median) std::cout << "Final_Point(Med.)\n";
@@ -71,12 +89,44 @@ void printSingle(const std::vector<Person>& students, bool median) {
     }
 }
 
+void printTable(const std::vector<Person>& students, std::ostream& out) {
+    out << std::left << std::setw(18) << "Name" << std::setw(20) << "Surname" << std::right
+        << std::setw(14) << "Final (Avg.)" << " | " << std::setw(14) << "Final (Med.)" << "\n";
+    out << std::string(68, '-') << "\n";
+    for (size_t i = 0; i < students.size(); i++) out << students[i] << "\n";
+}
+
 int main() {
     srand(time(0));
     std::vector<Person> students;
 
-    std::cout << "1 - enter data manually\n2 - generate random data\n";
-    int mode = readInt("Choice: ", 1, 2);
+    std::cout << "1 - enter data manually\n2 - generate random data\n3 - read data from file\n";
+    int mode = readInt("Choice: ", 1, 3);
+
+    if (mode == 3) {
+        std::string fileName;
+        std::cout << "File name: ";
+        std::cin >> fileName;
+        if (!readFile(fileName, students)) {
+            std::cout << "Cannot open file " << fileName << "\n";
+            return 1;
+        }
+        std::sort(students.begin(), students.end(), compareStudents);
+        std::cout << "Loaded " << students.size() << " students.\n";
+
+        std::string outName;
+        std::cout << "Output file name (0 for console): ";
+        std::cin >> outName;
+        if (outName == "0") {
+            printTable(students, std::cout);
+        } else {
+            std::ofstream out(outName);
+            printTable(students, out);
+            out.close();
+            std::cout << "Results written to " << outName << "\n";
+        }
+        return 0;
+    }
 
     if (mode == 1) {
         int more = 1;
