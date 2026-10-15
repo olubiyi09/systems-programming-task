@@ -1,11 +1,12 @@
 CXX = g++
 CXXFLAGS = -std=c++17 -O2 -Wall -Wextra
-SRC = src/main.cpp src/Person.cpp
+SRC = src/main.cpp src/Person.cpp src/Functions.cpp
+HDR = src/Person.h src/Functions.h
 TARGET = build/students
 
 all: $(TARGET)
 
-$(TARGET): $(SRC) src/Person.h
+$(TARGET): $(SRC) $(HDR)
 	@mkdir -p build
 	$(CXX) $(CXXFLAGS) -o $@ $(SRC)
 
