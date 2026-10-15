@@ -36,7 +36,9 @@ int main() {
             std::cout << "File name: ";
             std::cin >> fileName;
             bool median = chooseMedian();
-            testVector(fileName, median);
+            int container = readInt("Container (1 - vector, 2 - list): ", 1, 2);
+            if (container == 1) testVector(fileName, median);
+            else testList(fileName, median);
             return 0;
         }
 

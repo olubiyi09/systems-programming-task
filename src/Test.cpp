@@ -3,9 +3,11 @@
 #include <algorithm>
 #include <iomanip>
 #include <iostream>
+#include <list>
 #include <vector>
 
 #include "Functions.h"
+#include "FunctionsList.h"
 #include "Person.h"
 #include "Timer.h"
 
@@ -46,4 +48,32 @@ void testVector(std::string fileName, bool median) {
     times[6] = total.elapsed();
 
     printTimes("vector", students.size(), passed.size(), failed.size(), times);
+}
+
+void testList(std::string fileName, bool median) {
+    std::list<Person> students, passed, failed;
+    double times[7];
+    Timer total;
+    Timer t;
+
+    readFile(fileName, students);
+    times[0] = t.elapsed();
+    t.reset();
+    for (Person& p : students) p.calculateFinal(median);
+    times[1] = t.elapsed();
+    t.reset();
+    students.sort(compareStudents);
+    times[2] = t.elapsed();
+    t.reset();
+    splitStudents(students, passed, failed);
+    times[3] = t.elapsed();
+    t.reset();
+    writeResults("passed_" + fileName, passed, median);
+    times[4] = t.elapsed();
+    t.reset();
+    writeResults("failed_" + fileName, failed, median);
+    times[5] = t.elapsed();
+    times[6] = total.elapsed();
+
+    printTimes("list", students.size(), passed.size(), failed.size(), times);
 }
