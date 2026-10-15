@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <cstdlib>
 #include <ctime>
-#include <iomanip>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -9,6 +8,7 @@
 
 #include "Functions.h"
 #include "Person.h"
+#include "Test.h"
 #include "Timer.h"
 
 int main() {
@@ -36,39 +36,7 @@ int main() {
             std::cout << "File name: ";
             std::cin >> fileName;
             bool median = chooseMedian();
-            std::vector<Person> passed, failed;
-            Timer total;
-            Timer t;
-
-            readFile(fileName, students);
-            double readTime = t.elapsed();
-            t.reset();
-            for (size_t i = 0; i < students.size(); i++) students[i].calculateFinal(median);
-            double finalTime = t.elapsed();
-            t.reset();
-            std::sort(students.begin(), students.end(), compareStudents);
-            double sortTime = t.elapsed();
-            t.reset();
-            splitStudents(students, passed, failed);
-            double splitTime = t.elapsed();
-            t.reset();
-            writeResults("passed_" + fileName, passed, median);
-            double passedTime = t.elapsed();
-            t.reset();
-            writeResults("failed_" + fileName, failed, median);
-            double failedTime = t.elapsed();
-            double totalTime = total.elapsed();
-
-            std::cout << "\n" << students.size() << " students: " << passed.size() << " passed, "
-                      << failed.size() << " failed\n";
-            std::cout << std::fixed << std::setprecision(4);
-            std::cout << std::left << std::setw(28) << "Reading from file:" << readTime << " s\n";
-            std::cout << std::setw(28) << "Calculating final points:" << finalTime << " s\n";
-            std::cout << std::setw(28) << "Sorting:" << sortTime << " s\n";
-            std::cout << std::setw(28) << "Splitting in two:" << splitTime << " s\n";
-            std::cout << std::setw(28) << "Writing passed students:" << passedTime << " s\n";
-            std::cout << std::setw(28) << "Writing failed students:" << failedTime << " s\n";
-            std::cout << std::setw(28) << "Total time:" << totalTime << " s\n";
+            testVector(fileName, median);
             return 0;
         }
 
