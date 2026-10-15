@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iomanip>
+#include <sstream>
 #include <stdexcept>
 
 int readInt(std::string prompt, int min, int max) {
@@ -108,4 +109,25 @@ void printTable(const std::vector<Person>& students, std::ostream& out) {
         << std::setw(14) << "Final (Avg.)" << " | " << std::setw(14) << "Final (Med.)" << "\n";
     out << std::string(68, '-') << "\n";
     for (size_t i = 0; i < students.size(); i++) out << students[i] << "\n";
+}
+
+void generateFile(std::string fileName, int count, int hwCount) {
+    std::ofstream out(fileName);
+    if (!out) throw std::runtime_error("Cannot create file " + fileName);
+    std::ostringstream buffer;
+    buffer << std::left << std::setw(16) << "Name" << std::setw(18) << "Surname" << std::right;
+    for (int j = 1; j <= hwCount; j++) buffer << std::setw(5) << ("HW" + std::to_string(j));
+    buffer << std::setw(6) << "Exam" << "\n";
+    for (int i = 1; i <= count; i++) {
+        buffer << std::left << std::setw(16) << ("Name" + std::to_string(i))
+               << std::setw(18) << ("Surname" + std::to_string(i)) << std::right;
+        for (int j = 0; j < hwCount; j++) buffer << std::setw(5) << rand() % 10 + 1;
+        buffer << std::setw(6) << rand() % 10 + 1 << "\n";
+        if (i % 100000 == 0) {
+            out << buffer.str();
+            buffer.str("");
+        }
+    }
+    out << buffer.str();
+    out.close();
 }

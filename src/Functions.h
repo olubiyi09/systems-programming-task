@@ -14,3 +14,4 @@ bool compareStudents(const Person& a, const Person& b);
 void printSingle(const std::vector<Person>& students, bool median);
 void printTable(const std::vector<Person>& students, std::ostream& out);
 void writeTable(std::string fileName, const std::vector<Person>& students);
+void generateFile(std::string fileName, int count, int hwCount);

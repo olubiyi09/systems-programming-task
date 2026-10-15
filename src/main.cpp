@@ -8,14 +8,27 @@
 
 #include "Functions.h"
 #include "Person.h"
+#include "Timer.h"
 
 int main() {
     srand(time(0));
     std::vector<Person> students;
 
     try {
-        std::cout << "1 - enter data manually\n2 - generate random data\n3 - read data from file\n";
-        int mode = readInt("Choice: ", 1, 3);
+        std::cout << "1 - enter data manually\n2 - generate random data\n3 - read data from file\n4 - generate student files\n";
+        int mode = readInt("Choice: ", 1, 4);
+
+        if (mode == 4) {
+            int sizes[] = {1000, 10000, 100000, 1000000, 10000000};
+            int hwCount = readInt("Number of homework assignments: ", 1, 20);
+            for (int i = 0; i < 5; i++) {
+                std::string fileName = "students" + std::to_string(sizes[i]) + ".txt";
+                Timer t;
+                generateFile(fileName, sizes[i], hwCount);
+                std::cout << fileName << " created in " << t.elapsed() << " s\n";
+            }
+            return 0;
+        }
 
         if (mode == 3) {
             std::string fileName;
