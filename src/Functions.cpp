@@ -80,35 +80,36 @@ void readFile(std::string fileName, std::vector<Person>& students) {
     if (students.empty()) throw std::runtime_error("No students in file " + fileName);
 }
 
-void writeTable(std::string fileName, const std::vector<Person>& students) {
-    std::ofstream out(fileName);
-    if (!out) throw std::runtime_error("Cannot create file " + fileName);
-    printTable(students, out);
-    out.close();
-}
-
 bool compareStudents(const Person& a, const Person& b) {
     if (a.surname() != b.surname()) return a.surname() < b.surname();
     return a.name() < b.name();
 }
 
-void printSingle(const std::vector<Person>& students, bool median) {
-    std::cout << "\n" << std::left << std::setw(18) << "Name" << std::setw(20) << "Surname";
-    if (median) std::cout << "Final_Point(Med.)\n";
-    else std::cout << "Final_Point(Aver.)\n";
-    std::cout << std::string(56, '-') << "\n";
+void printSingle(const std::vector<Person>& students, bool median, std::ostream& out) {
+    out << std::left << std::setw(18) << "Name" << std::setw(20) << "Surname";
+    if (median) out << "Final_Point(Med.)\n";
+    else out << "Final_Point(Aver.)\n";
+    out << std::string(56, '-') << "\n";
     for (size_t i = 0; i < students.size(); i++) {
-        std::cout << std::left << std::setw(18) << students[i].name()
-                  << std::setw(20) << students[i].surname() << std::right << std::fixed
-                  << std::setprecision(2) << std::setw(14) << students[i].finalGrade() << "\n";
+        out << std::left << std::setw(18) << students[i].name()
+            << std::setw(20) << students[i].surname() << std::right << std::fixed
+            << std::setprecision(2) << std::setw(14) << students[i].finalGrade() << "\n";
     }
 }
 
-void printTable(const std::vector<Person>& students, std::ostream& out) {
-    out << std::left << std::setw(18) << "Name" << std::setw(20) << "Surname" << std::right
-        << std::setw(14) << "Final (Avg.)" << " | " << std::setw(14) << "Final (Med.)" << "\n";
-    out << std::string(68, '-') << "\n";
-    for (size_t i = 0; i < students.size(); i++) out << students[i] << "\n";
+void writeResults(std::string fileName, const std::vector<Person>& students, bool median) {
+    std::ofstream out(fileName);
+    if (!out) throw std::runtime_error("Cannot create file " + fileName);
+    printSingle(students, median, out);
+    out.close();
+}
+
+void splitStudents(const std::vector<Person>& students, std::vector<Person>& passed,
+                   std::vector<Person>& failed) {
+    for (size_t i = 0; i < students.size(); i++) {
+        if (students[i].finalGrade() < 5.0) failed.push_back(students[i]);
+        else passed.push_back(students[i]);
+    }
 }
 
 void generateFile(std::string fileName, int count, int hwCount) {

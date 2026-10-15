@@ -6,4 +6,6 @@ students100000.txt
 students1000000.txt
 students10000000.txt
 output*.txt
+passed_*.txt
+failed_*.txt
 .DS_Store
