@@ -3,26 +3,35 @@
 #include <cstdlib>
 #include <fstream>
 #include <iomanip>
+#include <stdexcept>
 
 int readInt(std::string prompt, int min, int max) {
-    int value;
+    std::string text;
     std::cout << prompt;
-    while (!(std::cin >> value) || value < min || value > max) {
-        if (std::cin.eof()) exit(1);
-        std::cin.clear();
-        std::cin.ignore(1000, '\n');
+    while (true) {
+        if (!(std::cin >> text)) throw std::runtime_error("Input ended");
+        try {
+            size_t pos;
+            int value = std::stoi(text, &pos);
+            if (pos != text.size()) throw std::invalid_argument(text);
+            if (value < min || value > max) throw std::out_of_range(text);
+            return value;
+        } catch (const std::invalid_argument&) {
+            std::cout << "This is not a number. ";
+        } catch (const std::out_of_range&) {
+            std::cout << "Number is out of range. ";
+        }
         std::cout << "Enter a whole number from " << min << " to " << max << ": ";
     }
-    return value;
 }
 
 bool chooseMedian() {
     std::string answer;
     std::cout << "Final grade by (a)verage or (m)edian? ";
-    std::cin >> answer;
+    if (!(std::cin >> answer)) throw std::runtime_error("Input ended");
     while (answer != "a" && answer != "m") {
         std::cout << "Type a or m: ";
-        std::cin >> answer;
+        if (!(std::cin >> answer)) throw std::runtime_error("Input ended");
     }
     return answer == "m";
 }
@@ -56,15 +65,25 @@ Person randomPerson(int number, int hwCount) {
     return p;
 }
 
-bool readFile(std::string fileName, std::vector<Person>& students) {
+void readFile(std::string fileName, std::vector<Person>& students) {
     std::ifstream file(fileName);
-    if (!file) return false;
+    if (!file) throw std::runtime_error("Cannot open file " + fileName);
     std::string header;
     std::getline(file, header);
     Person p;
     while (file >> p) students.push_back(p);
+    if (!file.eof())
+        throw std::runtime_error("Wrong data in " + fileName + " at student line " +
+                                 std::to_string(students.size() + 1));
     file.close();
-    return true;
+    if (students.empty()) throw std::runtime_error("No students in file " + fileName);
+}
+
+void writeTable(std::string fileName, const std::vector<Person>& students) {
+    std::ofstream out(fileName);
+    if (!out) throw std::runtime_error("Cannot create file " + fileName);
+    printTable(students, out);
+    out.close();
 }
 
 bool compareStudents(const Person& a, const Person& b) {
