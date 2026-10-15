@@ -36,9 +36,10 @@ int main() {
             std::cout << "File name: ";
             std::cin >> fileName;
             bool median = chooseMedian();
-            int container = readInt("Container (1 - vector, 2 - list): ", 1, 2);
+            int container = readInt("Container (1 - vector, 2 - list, 3 - deque): ", 1, 3);
             if (container == 1) testVector(fileName, median);
-            else testList(fileName, median);
+            else if (container == 2) testList(fileName, median);
+            else testDeque(fileName, median);
             return 0;
         }
 
